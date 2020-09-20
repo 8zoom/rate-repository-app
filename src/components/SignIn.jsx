@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Formik, useField } from "formik";
+import * as yup from 'yup';
 import FormikTextInput from "./FormikTextInput";
 
 const styles = StyleSheet.create({
@@ -24,6 +25,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 10,
   },
+});
+
+const validationSchema = yup.object().shape({
+  name: yup
+  .string()
+  .min(3, 'Username must be at least four characters long')
+  .required('Username is required'),
+
+  password: yup
+  .string()
+  .min(6, 'Password must be at least six characters long')
+  .required('Password is required')
 });
 
 const initialValues = {
@@ -71,7 +84,11 @@ const SignIn = () => {
     console.log(values);
   };
   return (
-    <Formik initialValues={initialValues} onSubmit={_onSubmit}>
+    <Formik 
+    initialValues={initialValues}
+    onSubmit={_onSubmit}
+    validationSchema={validationSchema}
+    >
       {({ handleSubmit }) => <SignInForm onSubmit={handleSubmit} />}
     </Formik>
   );
