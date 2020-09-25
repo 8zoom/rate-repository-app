@@ -17,8 +17,8 @@ const theme = {
     error: "#d73a4a",
   },
   fontSizes: {
-    body: 14,
-    subheading: 16,
+    body: 12,
+    subheading: 14,
     title: 18,
   },
   fonts: {

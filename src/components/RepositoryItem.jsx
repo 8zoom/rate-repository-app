@@ -16,8 +16,8 @@ const styles = StyleSheet.create({
   }, 
   avatar: {
     flexGrow: 0,
-    width: 74,
-    height: 66,
+    width: 64,
+    height: 56,
   },
   titleText: {
     flexDirection: 'column-reverse',
