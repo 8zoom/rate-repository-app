@@ -18,9 +18,15 @@ const styles = StyleSheet.create({
 
 });
 
-
-const AppBarTab = ({title}) => {
-return <Text  fontSize="title" fontWeight="bold" style={styles.title}>{title}</Text>;
+const handleClick = (title, dispatch) => {
+  if (title === 'Sign in') {
+    dispatch({type: 'signout'});
+  } else if (title === 'Sign out') {
+    dispatch({type: 'signin'});
+  }
+};
+const AppBarTab = ({title, dispatch}) => {
+  return <Text  onClick={() => handleClick(title, dispatch)} fontSize="title" fontWeight="bold" style={styles.title}>{title}</Text>;
 };
 
 export default AppBarTab;

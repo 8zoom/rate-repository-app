@@ -7,11 +7,12 @@ import theme from '../theme';
 import SignIn from './SignIn';
 
 const Main = () => {
+
   return (
     <View>
       <AppBar />
       <Switch>
-        <Route path='/signin'>
+        <Route path='/signIn'>
           <View style={theme.container}>
             <SignIn />
           </View>

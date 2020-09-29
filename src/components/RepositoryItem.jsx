@@ -2,92 +2,85 @@ import React from 'react';
 import {TouchableOpacity, View, StyleSheet, Button, Image } from 'react-native';
 import Text from './Text';
 
-const styles = StyleSheet.create({
-  column: {
-    display: 'flex',
-    flexDirection: 'column',
-  }, 
-  row: {
-    flexDirection: 'row',
-  }, 
-  title: {
-    flexGrow: 1,
-    marginLeft: 10,
-  }, 
-  avatar: {
-    flexGrow: 0,
-    width: 64,
-    height: 56,
-  },
-  titleText: {
-    flexDirection: 'column-reverse',
-    flexGrow: 1,
-  },
-  separator: {
-    marginVertical: 5,
-  },
-  entry: {
-    fontSize: 12,
-  },
-});
+  const styles = StyleSheet.create({
+    column: {
+      display: 'flex',
+      flexDirection: 'column',
+    }, 
+    row: {
+      flexDirection: 'row',
+    }, 
+    title: {
+      flexGrow: 1,
+      marginLeft: 10,
+    }, 
+    avatar: {
+      flexGrow: 0,
+      width: 64,
+      height: 56,
+    },
+    titleTextRow: {
+      flexDirection: 'row',
+      flexGrow: 1,
+      justifyContent: 'space-around'
+    },
+    titleText: {
+      flexDirection: 'column',
+    },
+    separator: {
+      marginVertical: 5,
+    },
+    entry: {
+      fontSize: 12,
+    },
+  });
+  export const convertNum = n => n > 1000 ? (n / 1000).toFixed(1) + 'k' : n;
 
-const Separator = () => (
-  <View style={styles.separator} />
-);
 
-const convertNum = n => n > 1000 ? (n / 1000).toFixed(1) + 'k' : n;
+export const RepositoryItem = ({ item, onPress, style }) => {
+  return (
+    <TouchableOpacity testID='touch' onPress={onPress} style={[styles.item,  style]}>
+      <View style={styles.row}>
+        <Image 
+          style={styles.avatar}
+          source={{uri: item.ownerAvatarUrl}}
+        />
+        <View style={styles.title}>
+          <Text fontWeight='bold'  fontSize='subheading'>{item.fullName}</Text>
+          <Text testID='description' color='textSecondary'>{item.description}</Text>
 
-const Item = ({ item, onPress, style }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.item,  style]}>
-    <View style={styles.row}>
-      <Image 
-        style={styles.avatar}
-        source={{uri: item.ownerAvatarUrl}}
-      />
-      <View style={styles.title}>
-        <Text fontWeight='bold'  fontSize='subheading'>{item.fullName}</Text>
-        <Text color='textSecondary'>{item.description}</Text>
+          <View style={styles.separator} />
+          <View style={styles.separator} />
 
-        <Separator />
-
-        <View style={{width: 150}}>
-          <Button title={item.language}/> 
+          <View style={{width: 150}}>
+            <Button title={item.language}/> 
+          </View>
         </View>
       </View>
-    </View>
 
-    <Separator />
+      <View style={styles.separator} />
 
-    <View style={styles.row}>
-      <View style={styles.titleText}>
-        <Text fontWeight='bold'>{convertNum(item.stargazersCount)}</Text>
-        <Text color='textSecondary'>Stars</Text>
+      <View style={styles.titleTextRow}>
+        <View style={styles.titleText}>
+          <Text color='textSecondary'>Stars</Text>
+          <Text testID='stargazers' fontWeight='bold'>{convertNum(item.stargazersCount)}</Text>
+        </View>
+        <View style={styles.titleText}>
+          <Text color='textSecondary'>Forks</Text>
+          <Text fontWeight='bold'>{convertNum(item.forksCount)}</Text>
+        </View>
+        <View style={styles.titleText}>
+          <Text color='textSecondary'>Reviews</Text>
+          <Text fontWeight='bold'>{convertNum(item.reviewCount)}</Text>
+        </View>
+        <View style={styles.titleText}>
+          <Text color='textSecondary'>Rating</Text>
+          <Text fontWeight='bold'>{convertNum(item.ratingAverage)}</Text>
+        </View>
       </View>
-      <View style={styles.titleText}>
-        <Text fontWeight='bold'>{convertNum(item.forksCount)}</Text>
-        <Text color='textSecondary'>Forks</Text>
-      </View>
-      <View style={styles.titleText}>
-        <Text fontWeight='bold'>{convertNum(item.reviewCount)}</Text>
-        <Text color='textSecondary'>Reviews</Text>
-      </View>
-      <View style={styles.titleText}>
-        <Text fontWeight='bold'>{convertNum(item.ratingAverage)}</Text>
-        <Text color='textSecondary'>Rating</Text>
-      </View>
-    </View>
-    <Separator />
-    <Separator />
-  </TouchableOpacity>
-);
-  
-const RepositoryItem= ({ item }) => {
-    return (
-      <Item
-        item={item}
-      />
-    );
+
+      <View style={styles.separator} />
+      <View style={styles.separator} />
+    </TouchableOpacity>
+  );
 };
-
-
-export default RepositoryItem;
