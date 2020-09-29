@@ -5,7 +5,7 @@ import { Link } from 'react-router-native';
 
 import theme from '../theme';
 import Text from './Text';
-import { useQuery } from '@apollo/react-hooks';
+import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import { AUTHORIZED_USER } from '../graphql/queries';
 
 import AuthStorageContext from "../contexts/AuthStorageContext";
@@ -48,25 +48,21 @@ const AppBarTab = ({ children, ...props }) => {
 };
 
 const AppBar = () => {
-  const [user , setData] = useState(null);
   const { data } = useQuery(AUTHORIZED_USER);
   const authStorage = useContext(AuthStorageContext);
-  const apolloClient = createApolloClient(authStorage);
+
+  // const apolloClient = createApolloClient(authStorage);
+  // note typo above ... :/
+
+  const apolloClient = useApolloClient();
+
+  const user = data ? data.authorizedUser  : undefined;
 
   const signOut= async () => {
-    if(user) {
       await authStorage.removeAccessToken();
       await apolloClient.resetStore();
-      setData(null);
-    } else {
-      setData(data.authorizedUser);
-    }
   };
 
-  useEffect(() => {      
-    if (data) setData(data.authorizedUser);
-  }, [data, user]);
-  console.log(user);
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}  horizontal>
@@ -74,7 +70,7 @@ const AppBar = () => {
         {user ?
         <Link to="/" component={AppBarTab} onPress={() => signOut()}>Sign out</Link>
         : 
-        <Link to="/signIn" component={AppBarTab}onPress={() => signOut()}>Sign in</Link>
+        <Link to="/signIn" component={AppBarTab}>Sign in</Link>
         }
       </ScrollView>
     </View>
