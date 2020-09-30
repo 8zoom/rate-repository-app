@@ -13,14 +13,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const FormikTextInput = ({ name, ...props }) => {
-  const [field, meta, helpers] = useField(name);
+const FormikTextInput = (props ) => {
+  const [field, meta, helpers] = useField(props.name);
   const showError = meta.touched && meta.error;
 
   return (
     <>
       <TextInput
-        onChangeText={value => helpers.setValue(value)}
+        onChangeText={(value) => helpers.setValue(value)}
         onBlur={() => helpers.setTouched(true)}
         value={field.value}
         error={showError}
@@ -30,5 +30,4 @@ const FormikTextInput = ({ name, ...props }) => {
     </>
   );
 };
-
 export default FormikTextInput;

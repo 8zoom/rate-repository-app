@@ -60,6 +60,7 @@ const AppBar = () => {
 
   const signOut= async () => {
       await authStorage.removeAccessToken();
+      // with incorrect apolloClient as above, re-renders do not occur
       await apolloClient.resetStore();
   };
 
