@@ -56,7 +56,7 @@ describe('RepositoryList', () => {
 
       // const flatlist = getByTestId('flat-list');
       // debug();
-      const buttons = queryAllByRole('button');
+      const buttons = queryAllByTestId('button');
       const descriptions = queryAllByTestId('description');
       const stargazers = queryAllByTestId('stargazers');
 

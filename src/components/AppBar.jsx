@@ -1,4 +1,4 @@
-import React, { useContext, useState , useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, ScrollView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 import { Link } from 'react-router-native';
@@ -9,7 +9,6 @@ import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import { AUTHORIZED_USER } from '../graphql/queries';
 
 import AuthStorageContext from "../contexts/AuthStorageContext";
-import createApolloClient from "../utils/apolloClient";
 
 const styles = StyleSheet.create({
   container: {

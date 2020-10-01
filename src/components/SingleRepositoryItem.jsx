@@ -1,7 +1,17 @@
 import React from 'react';
-import { TouchableOpacity, View, StyleSheet, Image } from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Button,
+  Image,
+} from 'react-native';
 import Text from './Text';
-import { useHistory } from 'react-router-native';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-native';
+import { REPOSITORY } from '../graphql/queries';
+import * as Linking from 'expo-linking';
+
 import theme from '../theme';
 const blue = theme.colors.google;
 
@@ -36,13 +46,27 @@ const styles = StyleSheet.create({
   entry: {
     fontSize: 12,
   },
+  button: {
+    alignSelf: 'flex-start',
+  },
 });
 
-export const convertNum = (n) => (n > 1000 ? (n / 1000).toFixed(1) + 'k' : n);
+const convertNum = (n) => (n > 1000 ? (n / 1000).toFixed(1) + 'k' : n);
 
-const RepositoryItem = ({ repository }) => {
-  const history = useHistory();
+const SingleRepositoryItem = () => {
+  const { id } = useParams();
+  const { loading, error, data } = useQuery(REPOSITORY, { variables: { id } });
+  if (loading)
+    return (
+      <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
+        {' '}
+        Loading...{' '}
+      </Text>
+    );
+  if (error) console.log(error);
+  if (data) console.log(data);
   const {
+    url,
     fullName,
     description,
     language,
@@ -51,15 +75,10 @@ const RepositoryItem = ({ repository }) => {
     ratingAverage,
     reviewCount,
     ownerAvatarUrl,
-  } = repository;
+  } = data.repository;
 
-  const onPress = () => {
-    history.push(`/repo/${repository.id}`);
-  };
   return (
-    <TouchableOpacity onPress={onPress} testID="touch">
-      <View style={styles.separator} />
-
+    <View>
       <View style={styles.row}>
         <Image style={styles.avatar} source={{ uri: ownerAvatarUrl }} />
         <View style={styles.title}>
@@ -71,7 +90,6 @@ const RepositoryItem = ({ repository }) => {
           </Text>
 
           <View style={styles.separator} />
-          <View style={styles.separator} />
 
           <View
             style={{
@@ -81,7 +99,7 @@ const RepositoryItem = ({ repository }) => {
               borderRadius: 2,
             }}
           >
-            <Text testID='button' style={{ color: 'white', fontSize: 14, padding: 8 }}>
+            <Text style={{ color: 'white', fontSize: 14, padding: 8 }}>
               {language}
             </Text>
           </View>
@@ -110,9 +128,30 @@ const RepositoryItem = ({ repository }) => {
           <Text fontWeight="bold">{convertNum(ratingAverage)}</Text>
         </View>
       </View>
+
       <View style={styles.separator} />
-    </TouchableOpacity>
+      <View style={styles.separator} />
+
+      <TouchableOpacity
+        onPress={() => {
+          Linking.openURL(url);
+        }}
+        testID="submitButton"
+      >
+        <View
+          style={{
+            backgroundColor: blue,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 5,
+          }}
+        >
+          <Text style={{ color: 'white', fontSize: 20, padding: 10 }}>
+            Open in GitHub
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
   );
 };
-
-export default RepositoryItem;
+export default SingleRepositoryItem;
