@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
+  FlatList,
   TouchableOpacity,
   View,
   StyleSheet,
   Button,
   Image,
+  Platform,
 } from 'react-native';
 import Text from './Text';
+import formatInThousands from '../utils/formatInThousands';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-native';
 import { REPOSITORY } from '../graphql/queries';
@@ -14,59 +17,23 @@ import * as Linking from 'expo-linking';
 
 import theme from '../theme';
 const blue = theme.colors.google;
+import { styles as repoStyles } from '../repositoryItemStyles.js';
 
-const styles = StyleSheet.create({
-  column: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  title: {
-    flexGrow: 1,
-    marginLeft: 10,
-  },
-  avatar: {
-    flexGrow: 0,
-    width: 64,
-    height: 56,
-  },
-  titleTextRow: {
-    flexDirection: 'row',
-    flexGrow: 1,
-    justifyContent: 'space-around',
-  },
-  titleText: {
-    flexDirection: 'column',
-  },
-  separator: {
-    marginVertical: 5,
-  },
-  entry: {
-    fontSize: 12,
-  },
-  button: {
-    alignSelf: 'flex-start',
-  },
-});
+const styles = StyleSheet.create(repoStyles);
 
-const convertNum = (n) => (n > 1000 ? (n / 1000).toFixed(1) + 'k' : n);
-
-const SingleRepositoryItem = () => {
-  const { id } = useParams();
-  const { loading, error, data } = useQuery(REPOSITORY, { variables: { id } });
-  if (loading)
-    return (
-      <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
-        {' '}
-        Loading...{' '}
+const CountItem = ({ label, count }) => {
+  return (
+    <View style={styles.countItem}>
+      <Text style={styles.countItemCount} fontWeight="bold">
+        {formatInThousands(count)}
       </Text>
-    );
-  if (error) console.log(error);
-  if (data) console.log(data);
+      <Text color="textSecondary">{label}</Text>
+    </View>
+  );
+};
+
+const RepositoryInfo = ({ repository }) => {
   const {
-    url,
     fullName,
     description,
     language,
@@ -75,83 +42,112 @@ const SingleRepositoryItem = () => {
     ratingAverage,
     reviewCount,
     ownerAvatarUrl,
-  } = data.repository;
+    url,
+  } = repository;
 
+  const onPress = () => Linking.openURL(url);
   return (
-    <View>
-      <View style={styles.row}>
-        <Image style={styles.avatar} source={{ uri: ownerAvatarUrl }} />
-        <View style={styles.title}>
-          <Text fontWeight="bold" fontSize="subheading">
+    <View style={styles.container}>
+      <View style={styles.topContainer}>
+        <View style={styles.avatarContainer}>
+          <Image source={{ uri: ownerAvatarUrl }} style={styles.avatar} />
+        </View>
+
+        <View style={styles.contentContainer}>
+          <Text
+            style={styles.nameText}
+            fontWeight="bold"
+            fontSize="subheading"
+            numberOfLines={1}
+          >
             {fullName}
           </Text>
-          <Text testID="description" color="textSecondary">
+          <Text style={styles.descriptionText} color="textSecondary">
             {description}
           </Text>
-
-          <View style={styles.separator} />
-
-          <View
-            style={{
-              backgroundColor: blue,
-              alignSelf: 'flex-start',
-              justifyContent: 'center',
-              borderRadius: 2,
-            }}
-          >
-            <Text style={{ color: 'white', fontSize: 14, padding: 8 }}>
-              {language}
-            </Text>
-          </View>
+          {language ? (
+            <View style={styles.languageContainer}>
+              <Text style={styles.languageText}>{language}</Text>
+            </View>
+          ) : null}
         </View>
       </View>
 
-      <View style={styles.separator} />
-
-      <View style={styles.titleTextRow}>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Stars</Text>
-          <Text testID="stargazers" fontWeight="bold">
-            {convertNum(stargazersCount)}
-          </Text>
-        </View>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Forks</Text>
-          <Text fontWeight="bold">{convertNum(forksCount)}</Text>
-        </View>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Reviews</Text>
-          <Text fontWeight="bold">{convertNum(reviewCount)}</Text>
-        </View>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Rating</Text>
-          <Text fontWeight="bold">{convertNum(ratingAverage)}</Text>
-        </View>
+      <View style={styles.bottomContainer}>
+        <CountItem count={stargazersCount} label="Stars" />
+        <CountItem count={forksCount} label="Forks" />
+        <CountItem count={reviewCount} label="Reviews" />
+        <CountItem count={ratingAverage} label="Rating" />
       </View>
 
-      <View style={styles.separator} />
-      <View style={styles.separator} />
-
-      <TouchableOpacity
-        onPress={() => {
-          Linking.openURL(url);
-        }}
-        testID="submitButton"
-      >
-        <View
-          style={{
-            backgroundColor: blue,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 5,
-          }}
-        >
-          <Text style={{ color: 'white', fontSize: 20, padding: 10 }}>
-            Open in GitHub
-          </Text>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.githubContainer}>
+        <Text onPress={() => onPress(url)} style={styles.githubText}>
+          Open in GitHub
+        </Text>
+      </View>
     </View>
   );
 };
+
+const ReviewItem = ({ review }) => {
+  return (
+    <View style={{ backgroundColor: 'white', padding: 15 }}>
+      <View style={{ flexDirection: 'row', marginBottom: 15 }}>
+        <View style={{ flexGrow: 0, marginRight: 20 }}>
+          <Text>{review.rating}</Text>
+        </View>
+
+        <View style={{ flexGrow: 1, flexShrink: 1 }}>
+          <Text>{review.user.username}</Text>
+          <Text>{review.createdAt}</Text>
+          <Text>{review.text}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const SingleRepositoryItem = () => {
+  const { id } = useParams();
+  const { loading, error, data } = useQuery(REPOSITORY, {
+    fetchPolicy: 'cache-and-network',
+    variables: { id },
+  });
+
+  if (loading)
+    return (
+      <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
+        Loading...
+      </Text>
+    );
+  if (error) {
+    return (
+      <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
+        Error! {error.message.toString()}
+      </Text>
+    );
+  }
+
+  const repository = data.repository;
+  const reviews = data.repository.reviews
+    ? repository.reviews.edges.map((edge) => edge.node)
+    : [];
+
+  return (
+    <FlatList
+      data={reviews}
+      renderItem={({ item }) => <ReviewItem review={item} />}
+      keyExtractor={({ id }) => id}
+      ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+      ItemSeparatorComponent={
+        Platform.OS !== 'android' &&
+        (({ highlighted }) => (
+          <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
+        ))
+      }
+      // ...
+    />
+  );
+};
+
 export default SingleRepositoryItem;

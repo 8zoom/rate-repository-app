@@ -2,46 +2,77 @@ import React from 'react';
 import { TouchableOpacity, View, StyleSheet, Image } from 'react-native';
 import Text from './Text';
 import { useHistory } from 'react-router-native';
+import formatInThousands from '../utils/formatInThousands';
 import theme from '../theme';
 const blue = theme.colors.google;
 
 const styles = StyleSheet.create({
-  column: {
-    display: 'flex',
-    flexDirection: 'column',
+  container: {
+    backgroundColor: 'white',
+    padding: 15,
   },
-  row: {
+  topContainer: {
     flexDirection: 'row',
+    marginBottom: 15,
   },
-  title: {
-    flexGrow: 1,
-    marginLeft: 10,
-  },
-  avatar: {
-    flexGrow: 0,
-    width: 64,
-    height: 56,
-  },
-  titleTextRow: {
+  bottomContainer: {
     flexDirection: 'row',
-    flexGrow: 1,
     justifyContent: 'space-around',
   },
-  titleText: {
-    flexDirection: 'column',
+  avatarContainer: {
+    flexGrow: 0,
+    marginRight: 20,
   },
-  separator: {
-    marginVertical: 5,
+  contentContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
   },
-  entry: {
-    fontSize: 12,
+  nameText: {
+    marginBottom: 5,
+  },
+  descriptionText: {
+    flexGrow: 1,
+  },
+  avatar: {
+    width: 45,
+    height: 45,
+    borderRadius: theme.roundness,
+  },
+  countItem: {
+    flexGrow: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 15,
+  },
+  countItemCount: {
+    marginBottom: 5,
+  },
+  languageContainer: {
+    marginTop: 10,
+    flexDirection: 'row',
+  },
+  languageText: {
+    color: 'white',
+    backgroundColor: theme.colors.primary,
+    borderRadius: theme.roundness,
+    flexGrow: 0,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
   },
 });
 
-export const convertNum = (n) => (n > 1000 ? (n / 1000).toFixed(1) + 'k' : n);
+const CountItem = ({ label, count }) => {
+  return (
+    <View style={styles.countItem}>
+      <Text style={styles.countItemCount} fontWeight="bold">
+        {formatInThousands(count)}
+      </Text>
+      <Text color="textSecondary">{label}</Text>
+    </View>
+  );
+};
 
 const RepositoryItem = ({ repository }) => {
-  const history = useHistory();
   const {
     fullName,
     description,
@@ -53,66 +84,45 @@ const RepositoryItem = ({ repository }) => {
     ownerAvatarUrl,
   } = repository;
 
+  const history = useHistory();
   const onPress = () => {
     history.push(`/repo/${repository.id}`);
   };
-  return (
-    <TouchableOpacity onPress={onPress} testID="touch">
-      <View style={styles.separator} />
 
-      <View style={styles.row}>
-        <Image style={styles.avatar} source={{ uri: ownerAvatarUrl }} />
-        <View style={styles.title}>
-          <Text fontWeight="bold" fontSize="subheading">
+    //<TouchableOpacity onPress={onPress} testID="touch">
+  return (
+    <TouchableOpacity onPress={onPress} testID="touch" style={styles.container}>
+      <View style={styles.topContainer}>
+        <View style={styles.avatarContainer}>
+          <Image source={{ uri: ownerAvatarUrl }} style={styles.avatar} />
+        </View>
+        <View style={styles.contentContainer}>
+          <Text
+            style={styles.nameText}
+            fontWeight="bold"
+            fontSize="subheading"
+            numberOfLines={1}
+          >
             {fullName}
           </Text>
-          <Text testID="description" color="textSecondary">
+          <Text style={styles.descriptionText} color="textSecondary">
             {description}
           </Text>
-
-          <View style={styles.separator} />
-          <View style={styles.separator} />
-
-          <View
-            style={{
-              backgroundColor: blue,
-              alignSelf: 'flex-start',
-              justifyContent: 'center',
-              borderRadius: 2,
-            }}
-          >
-            <Text testID='button' style={{ color: 'white', fontSize: 14, padding: 8 }}>
-              {language}
-            </Text>
-          </View>
+          {language ? (
+            <View style={styles.languageContainer}>
+              <Text style={styles.languageText}>{language}</Text>
+            </View>
+          ) : null}
         </View>
       </View>
-
-      <View style={styles.separator} />
-
-      <View style={styles.titleTextRow}>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Stars</Text>
-          <Text testID="stargazers" fontWeight="bold">
-            {convertNum(stargazersCount)}
-          </Text>
-        </View>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Forks</Text>
-          <Text fontWeight="bold">{convertNum(forksCount)}</Text>
-        </View>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Reviews</Text>
-          <Text fontWeight="bold">{convertNum(reviewCount)}</Text>
-        </View>
-        <View style={styles.titleText}>
-          <Text color="textSecondary">Rating</Text>
-          <Text fontWeight="bold">{convertNum(ratingAverage)}</Text>
-        </View>
+      <View style={styles.bottomContainer}>
+        <CountItem count={stargazersCount} label="Stars" />
+        <CountItem count={forksCount} label="Forks" />
+        <CountItem count={reviewCount} label="Reviews" />
+        <CountItem count={ratingAverage} label="Rating" />
       </View>
-      <View style={styles.separator} />
     </TouchableOpacity>
   );
 };
 
-export default RepositoryItem;
+export default RepositoryItem
