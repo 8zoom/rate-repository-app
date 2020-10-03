@@ -89,7 +89,7 @@ const RepositoryItem = ({ repository }) => {
     history.push(`/repo/${repository.id}`);
   };
 
-    //<TouchableOpacity onPress={onPress} testID="touch">
+  //<TouchableOpacity onPress={onPress} testID="touch">
   return (
     <TouchableOpacity onPress={onPress} testID="touch" style={styles.container}>
       <View style={styles.topContainer}>
@@ -105,12 +105,18 @@ const RepositoryItem = ({ repository }) => {
           >
             {fullName}
           </Text>
-          <Text style={styles.descriptionText} color="textSecondary">
+          <Text
+            testID="description"
+            style={styles.descriptionText}
+            color="textSecondary"
+          >
             {description}
           </Text>
           {language ? (
             <View style={styles.languageContainer}>
-              <Text style={styles.languageText}>{language}</Text>
+              <Text testID="language" style={styles.languageText}>
+                {language}
+              </Text>
             </View>
           ) : null}
         </View>
@@ -125,4 +131,4 @@ const RepositoryItem = ({ repository }) => {
   );
 };
 
-export default RepositoryItem
+export default RepositoryItem;

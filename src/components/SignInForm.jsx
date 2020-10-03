@@ -1,11 +1,6 @@
-import React from "react";
-import {
-  Text,
-  TouchableOpacity,
-  View,
-  StyleSheet,
-} from "react-native";
-import FormikTextInput from "./FormikTextInput";
+import React from 'react';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import FormikTextInput from './FormikTextInput';
 
 const styles = StyleSheet.create({
   input: {
@@ -14,7 +9,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderWidth: 0.5,
     borderRadius: 5,
-    borderColor: "grey",
+    borderColor: 'grey',
   },
   button: {
     marginVertical: 10,
@@ -26,22 +21,21 @@ const styles = StyleSheet.create({
 export const SignInForm = ({ onSubmit }) => {
   return (
     <View>
-        <View style={styles.input}>
-
-      <FormikTextInput
-        name="username"
-        placeholder="Username"
-        testID="usernameField"
-      />
-        </View>
-        <View style={styles.input}>
-      <FormikTextInput
-        name="password"
-        placeholder="Password"
-        secureTextEntry={true}
-        testID="passwordField"
-      />
-        </View>
+      <View style={styles.input}>
+        <FormikTextInput
+          name="username"
+          placeholder="Username"
+          testID="usernameField"
+        />
+      </View>
+      <View style={styles.input}>
+        <FormikTextInput
+          name="password"
+          placeholder="Password"
+          secureTextEntry={true}
+          testID="passwordField"
+        />
+      </View>
       <TouchableOpacity
         onPress={() => {
           onSubmit();
@@ -50,13 +44,13 @@ export const SignInForm = ({ onSubmit }) => {
       >
         <View
           style={{
-            backgroundColor: "blue",
-            alignItems: "center",
-            justifyContent: "center",
+            backgroundColor: 'blue',
+            alignItems: 'center',
+            justifyContent: 'center',
             borderRadius: 5,
           }}
         >
-          <Text style={{ color: "white", fontSize: 24, padding: 10 }}>
+          <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
             Sign in
           </Text>
         </View>

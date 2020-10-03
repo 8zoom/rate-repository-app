@@ -1,5 +1,10 @@
 import React, { useContext } from 'react';
-import { View, ScrollView, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import {
+  View,
+  ScrollView,
+  TouchableWithoutFeedback,
+  StyleSheet,
+} from 'react-native';
 import Constants from 'expo-constants';
 import { Link } from 'react-router-native';
 
@@ -8,7 +13,7 @@ import Text from './Text';
 import { useApolloClient, useQuery } from '@apollo/react-hooks';
 import { AUTHORIZED_USER } from '../graphql/queries';
 
-import AuthStorageContext from "../contexts/AuthStorageContext";
+import AuthStorageContext from '../contexts/AuthStorageContext';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,10 +38,9 @@ const styles = StyleSheet.create({
   },
 });
 
-
 const AppBarTab = ({ children, ...props }) => {
   return (
-    <TouchableWithoutFeedback style={styles.tabTouchable}{...props}>
+    <TouchableWithoutFeedback style={styles.tabTouchable} {...props}>
       <View style={styles.tabContainer}>
         <Text fontWeight="bold" style={styles.tabText}>
           {children}
@@ -55,23 +59,32 @@ const AppBar = () => {
 
   const apolloClient = useApolloClient();
 
-  const user = data ? data.authorizedUser  : undefined;
+  const user = data ? data.authorizedUser : undefined;
 
-  const signOut= async () => {
-      await authStorage.removeAccessToken();
-      // with incorrect apolloClient as above, re-renders do not occur
-      await apolloClient.resetStore();
+  const signOut = async () => {
+    await authStorage.removeAccessToken();
+    // with incorrect apolloClient as above, re-renders do not occur
+    await apolloClient.resetStore();
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}  horizontal>
-        <Link to="/" component={AppBarTab}>Repositories</Link>
-        {user ?
-        <Link to="/" component={AppBarTab} onPress={() => signOut()}>Sign out</Link>
-        : 
-        <Link to="/signIn" component={AppBarTab}>Sign in</Link>
-        }
+      <ScrollView style={styles.scrollView} horizontal>
+        <Link to="/" component={AppBarTab}>
+          Repositories
+        </Link>
+        <Link to="/review" component={AppBarTab}>
+          Create a review
+        </Link>
+        {user ? (
+          <Link to="/" component={AppBarTab} onPress={() => signOut()}>
+            Sign out
+          </Link>
+        ) : (
+          <Link to="/signIn" component={AppBarTab}>
+            Sign in
+          </Link>
+        )}
       </ScrollView>
     </View>
   );

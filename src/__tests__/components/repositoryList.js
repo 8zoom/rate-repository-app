@@ -1,6 +1,5 @@
 import React from 'react';
 import { RepositoryListContainer } from '../../components/RepositoryListContainer';
-import { convertNum } from '../../components/RepositoryItem';
 import { render } from '@testing-library/react-native';
 
 describe('RepositoryList', () => {
@@ -50,26 +49,28 @@ describe('RepositoryList', () => {
       };
 
       // Add your test code here
-      const { queryAllByRole, queryAllByTestId } = render(
+      const { queryAllByRole, queryAllByTestId, queryAllByText } = render(
         <RepositoryListContainer repositories={repositories} />,
       );
 
       // const flatlist = getByTestId('flat-list');
       // debug();
-      const buttons = queryAllByTestId('button');
+      const language = queryAllByTestId('language');
       const descriptions = queryAllByTestId('description');
-      const stargazers = queryAllByTestId('stargazers');
+      const stargazers = queryAllByText('Stars');
 
-      expect(buttons[0]).toHaveTextContent('TypeScript');
-      expect(buttons[1]).toHaveTextContent('JavaScript');
+      expect(language[0]).toHaveTextContent('TypeScript');
+      expect(language[1]).toHaveTextContent('JavaScript');
 
       expect(descriptions[0]).toHaveTextContent(
         repositories.edges[0].node.description,
       );
 
-      expect(stargazers[stargazers.length - 1]).toHaveTextContent(
-        convertNum(1760),
-      );
+      expect(stargazers[0].parent.parent).toHaveTextContent('21.9k');
+      expect(stargazers[1].parent.parent).toHaveTextContent('1.8k');
+
+      const stars = stargazers.map((node) => node.parent.parent);
+      console.log(stars[0].findAllByType('Text')[0].children.toString());
     });
   });
 });
