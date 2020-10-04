@@ -73,9 +73,11 @@ const AppBar = () => {
         <Link to="/" component={AppBarTab}>
           Repositories
         </Link>
-        <Link to="/review" component={AppBarTab}>
-          Create a review
-        </Link>
+        {user && (
+          <Link to="/review" component={AppBarTab}>
+            Create a review
+          </Link>
+        )}
         {user ? (
           <Link to="/" component={AppBarTab} onPress={() => signOut()}>
             Sign out
@@ -83,6 +85,11 @@ const AppBar = () => {
         ) : (
           <Link to="/signIn" component={AppBarTab}>
             Sign in
+          </Link>
+        )}
+        {!user && (
+          <Link to="/signUp" component={AppBarTab}>
+            Sign up
           </Link>
         )}
       </ScrollView>

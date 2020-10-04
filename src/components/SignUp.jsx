@@ -6,7 +6,8 @@ import FormikTextInput from './FormikTextInput';
 import * as yup from 'yup';
 
 import { useMutation } from '@apollo/react-hooks';
-import { CREATE_REVIEW } from '../graphql/mutations';
+import { SIGN_UP } from '../graphql/mutations';
+import { useSignIn } from '../hooks/useSignIn';
 
 const styles = StyleSheet.create({
   input: {
@@ -25,40 +26,47 @@ const styles = StyleSheet.create({
 });
 
 const validationSchema = yup.object().shape({
-  repositoryName: yup
+  username: yup
     .string()
-    .min(2, 'Repository Name must be at least four characters long')
-    .required('Repository Name is required'),
+    .min(1, 'Username must be between 1 and 30 characters long')
+    .max(30, 'Username must be between 1 and 30 characters long')
+    .required('Username is required'),
 
-  ownerName: yup
+  password: yup
     .string()
-    .min(2, "The repository owner's name must be at least six characters long")
-    .required('Name is required'),
-
-  rating: yup.number().required('A rating is required'),
+    .required('Password is required')
+    .min(1, 'Username must be between 1 and 30 characters long')
+    .max(30, 'Username must be between 1 and 30 characters long'),
+  passwordConfirm: yup
+    .string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match'),
 });
 
 const initialValues = {
-  repositoryName: '',
-  ownerName: '',
-  rating: '',
-  text: '',
+  username: '',
+  password: '',
+  passwordConfirm: '',
 };
 
-const ReviewForm = ({ onSubmit }) => {
+const SignUpForm = ({ onSubmit }) => {
   return (
     <View>
       <View style={styles.input}>
-        <FormikTextInput name="ownerName" placeholder="Repository owner name" />
+        <FormikTextInput name="username" placeholder="Username" />
       </View>
       <View style={styles.input}>
-        <FormikTextInput name="repositoryName" placeholder="Repository name" />
+        <FormikTextInput
+          name="password"
+          placeholder="Password"
+          secureTextEntry={true}
+        />
       </View>
       <View style={styles.input}>
-        <FormikTextInput name="rating" placeholder="Rating between 0 and 100" />
-      </View>
-      <View style={styles.input}>
-        <FormikTextInput name="text" placeholder="Review" multiline={true} />
+        <FormikTextInput
+          name="passwordConfirm"
+          placeholder="Password confirmation"
+          secureTextEntry={true}
+        />
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -75,7 +83,7 @@ const ReviewForm = ({ onSubmit }) => {
           }}
         >
           <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
-            Create a review
+            Sign up
           </Text>
         </View>
       </TouchableOpacity>
@@ -83,23 +91,28 @@ const ReviewForm = ({ onSubmit }) => {
   );
 };
 
-const Review = () => {
-  const [mutate] = useMutation(CREATE_REVIEW);
+const SignUp = () => {
+  const [createUser] = useMutation(SIGN_UP);
+  const [signIn] = useSignIn();
   const history = useHistory();
 
   const onSubmit = async (values) => {
-    const { repositoryName, ownerName, rating, text } = values;
+    const { username, password } = values;
     try {
-      const { data } = await mutate({
-        variables: {
-          review: { repositoryName, ownerName, rating: Number(rating), text },
-        },
+      const { data } = await createUser({
+        variables: { user: { username, password } },
       });
 
-      const id = await data.createReview.repository.id;
-      if (data) history.push(`/repo/${id}`);
+      if (data) {
+        try {
+          await signIn({ username, password });
+          history.push('/');
+        } catch (e) {
+          console.log('sign in error after creating new user', e);
+        }
+      }
     } catch (e) {
-      console.log(e);
+      console.log('error creating user', e);
     }
   };
   return (
@@ -108,9 +121,9 @@ const Review = () => {
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      {({ handleSubmit }) => <ReviewForm onSubmit={handleSubmit} />}
+      {({ handleSubmit }) => <SignUpForm onSubmit={handleSubmit} />}
     </Formik>
   );
 };
 
-export default Review;
+export default SignUp;

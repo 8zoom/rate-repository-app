@@ -1,4 +1,5 @@
 import { gql } from 'apollo-boost';
+import { USER_BASE_FIELDS } from './fragments';
 
 // remember that the  AutorizeInput "input type" is defined by the api server
 // authorize(credentials: AuthorizeInput): AuthorizationPayload
@@ -30,4 +31,13 @@ export const CREATE_REVIEW = gql`
       text
     }
   }
+`;
+
+export const SIGN_UP = gql`
+  mutation CreateUser($user: CreateUserInput) {
+    createUser(user: $user) {
+      ...UserBaseFields
+    }
+  }
+  ${USER_BASE_FIELDS}
 `;
