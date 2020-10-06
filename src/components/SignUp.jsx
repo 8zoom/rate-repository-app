@@ -4,6 +4,7 @@ import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { useHistory } from 'react-router-native';
 import FormikTextInput from './FormikTextInput';
 import * as yup from 'yup';
+import theme from '../theme';
 
 import { useMutation } from '@apollo/react-hooks';
 import { SIGN_UP } from '../graphql/mutations';
@@ -50,7 +51,7 @@ const initialValues = {
 
 const SignUpForm = ({ onSubmit }) => {
   return (
-    <View>
+    <View style={theme.container}>
       <View style={styles.input}>
         <FormikTextInput name="username" placeholder="Username" />
       </View>

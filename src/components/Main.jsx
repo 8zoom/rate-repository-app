@@ -15,29 +15,19 @@ const Main = () => {
       <AppBar />
       <Switch>
         <Route path="/signIn">
-          <View style={theme.container}>
-            <SignIn />
-          </View>
+          <SignIn />
         </Route>
         <Route path="/signUp">
-          <View style={theme.container}>
-            <SignUp />
-          </View>
+          <SignUp />
         </Route>
         <Route path="/review">
-          <View style={theme.container}>
-            <Review />
-          </View>
+          <Review />
         </Route>
         <Route path="/repo/:id">
-          <View style={theme.container}>
-            <SingleRepositoryItem />
-          </View>
+          <SingleRepositoryItem />
         </Route>
         <Route path="/">
-          <View style={theme.horizontalContainer}>
-            <RepositoryList />
-          </View>
+          <RepositoryList />
         </Route>
         <Redirect to="/" />
       </Switch>

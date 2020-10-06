@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import FormikTextInput from './FormikTextInput';
+import theme from '../theme';
 
 const styles = StyleSheet.create({
   input: {
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
 
 export const SignInForm = ({ onSubmit }) => {
   return (
-    <View>
+    <View style={theme.container}>
       <View style={styles.input}>
         <FormikTextInput
           name="username"
@@ -36,6 +37,7 @@ export const SignInForm = ({ onSubmit }) => {
           testID="passwordField"
         />
       </View>
+
       <TouchableOpacity
         onPress={() => {
           onSubmit();

@@ -1,8 +1,8 @@
 import React from 'react';
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, Text } from 'react-native';
 import  RepositoryItem  from './RepositoryItem';
 
-export const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories, orderBy, children }) => {
   
   const styles = StyleSheet.create({
     separator: {
@@ -27,7 +27,8 @@ export const RepositoryListContainer = ({ repositories }) => {
       // causes a "hook error" when attempting to use "useHistory" in the RepositoryList FC
       renderItem={({ item }) => <RepositoryItem repository={item} />}
       ItemSeparatorComponent={ItemSeparator}
+      ListHeaderComponent={children}
       showsVerticalScrollIndicator={false}
-    />
+    /> 
   );
 };
