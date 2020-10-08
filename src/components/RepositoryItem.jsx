@@ -3,63 +3,9 @@ import { TouchableOpacity, View, StyleSheet, Image } from 'react-native';
 import Text from './Text';
 import { useHistory } from 'react-router-native';
 import formatInThousands from '../utils/formatInThousands';
-import theme from '../theme';
-const blue = theme.colors.google;
+import { styles as repoStyles } from '../repositoryItemStyles.js';
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: 'white',
-    padding: 15,
-  },
-  topContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
-  },
-  bottomContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  avatarContainer: {
-    flexGrow: 0,
-    marginRight: 20,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    flexShrink: 1,
-  },
-  nameText: {
-    marginBottom: 5,
-  },
-  descriptionText: {
-    flexGrow: 1,
-  },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: theme.roundness,
-  },
-  countItem: {
-    flexGrow: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 15,
-  },
-  countItemCount: {
-    marginBottom: 5,
-  },
-  languageContainer: {
-    marginTop: 10,
-    flexDirection: 'row',
-  },
-  languageText: {
-    color: 'white',
-    backgroundColor: theme.colors.primary,
-    borderRadius: theme.roundness,
-    flexGrow: 0,
-    paddingVertical: 3,
-    paddingHorizontal: 6,
-  },
-});
+const styles = StyleSheet.create(repoStyles);
 
 const CountItem = ({ label, count }) => {
   return (

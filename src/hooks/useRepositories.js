@@ -26,19 +26,65 @@ import { useQuery } from '@apollo/react-hooks';
 
 import { GET_REPOSITORIES } from '../graphql/queries';
 
-const useRepositories = (args) => {
-  let variables = {
+/*
+const useRepositories = (variables) => {
+  let defaultVariables = {
     orderBy: 'RATING_AVERAGE',
     orderDirection: 'DESC',
   };
 
-  if (args) variables = args;
+  if (!variables) variables = defaultVariables;
   const { data, ...result } = useQuery(GET_REPOSITORIES, {
     fetchPolicy: 'cache-and-network',
     variables,
   });
 
   return { repositories: data ? data.repositories : undefined, ...result };
+};
+*/
+
+const useRepositories = (variables) => {
+  const { data, loading, fetchMore, ...result } = useQuery(GET_REPOSITORIES, {
+    variables,
+    // ...
+  });
+
+  const handleFetchMore = () => {
+    const canFetchMore =
+      !loading && data && data.repositories.pageInfo.hasNextPage;
+
+    if (!canFetchMore) {
+      return;
+    }
+
+    fetchMore({
+      query: GET_REPOSITORIES,
+      variables: {
+        after: data.repositories.pageInfo.endCursor,
+        ...variables,
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        const nextResult = {
+          repositories: {
+            ...fetchMoreResult.repositories,
+            edges: [
+              ...previousResult.repositories.edges,
+              ...fetchMoreResult.repositories.edges,
+            ],
+          },
+        };
+
+        return nextResult;
+      },
+    });
+  };
+
+  return {
+    repositories: data ? data.repositories : undefined,
+    fetchMore: handleFetchMore,
+    loading,
+    ...result,
+  };
 };
 
 export default useRepositories;

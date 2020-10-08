@@ -1,5 +1,6 @@
 import React from 'react';
 import { RepositoryListContainer } from '../../components/RepositoryListContainer';
+import SortList from '../../components/SortList';
 import { render } from '@testing-library/react-native';
 
 describe('RepositoryList', () => {
@@ -48,9 +49,27 @@ describe('RepositoryList', () => {
         ],
       };
 
+      const orderEnums = {
+        latest: { orderBy: 'CREATED_AT' },
+        rating: { orderBy: 'RATING_AVERAGE' },
+        up: { orderDirection: 'ASC' },
+        down: { orderDirection: 'DESC' },
+      };
+
+      const setSearchKeyword = jest.fn();
+      let searchKeyword = '';
+      const setOrderBy = jest.fn();
+
       // Add your test code here
       const { queryAllByRole, queryAllByTestId, queryAllByText } = render(
-        <RepositoryListContainer repositories={repositories} />,
+        <RepositoryListContainer repositories={repositories}>
+          <SortList
+            setOrderBy={setOrderBy}
+            orderEnums={orderEnums}
+            searchKeyword={searchKeyword}
+            setSearchKeyword={setSearchKeyword}
+          />
+        </RepositoryListContainer>,
       );
 
       // const flatlist = getByTestId('flat-list');

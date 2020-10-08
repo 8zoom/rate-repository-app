@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   FlatList,
   TouchableOpacity,
@@ -7,18 +7,19 @@ import {
   Button,
   Image,
   Platform,
+  Dimensions,
 } from 'react-native';
 import Text from './Text';
 import formatInThousands from '../utils/formatInThousands';
-import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-native';
-import { REPOSITORY } from '../graphql/queries';
+
+import useSingleRepository from '../hooks/useSingleRepository';
 import * as Linking from 'expo-linking';
 
 import theme from '../theme';
-const blue = theme.colors.google;
 import { styles as repoStyles } from '../repositoryItemStyles.js';
 
+const blue = theme.colors.google;
 const styles = StyleSheet.create(repoStyles);
 
 const CountItem = ({ label, count }) => {
@@ -108,45 +109,44 @@ const ReviewItem = ({ review }) => {
 };
 
 const SingleRepositoryItem = () => {
+  // const [reviews, setReviews] = useState([]);
   const { id } = useParams();
-  const { loading, error, data } = useQuery(REPOSITORY, {
-    fetchPolicy: 'cache-and-network',
-    variables: { id },
+
+  const { repository, fetchMore } = useSingleRepository({
+    id,
+    first: 4,
   });
 
-  if (loading)
-    return (
-      <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
-        Loading...
-      </Text>
-    );
-  if (error) {
-    return (
-      <Text style={{ color: 'white', fontSize: 24, padding: 10 }}>
-        Error! {error.message.toString()}
-      </Text>
-    );
-  }
+  const onEndReach = () => {
+    fetchMore();
+  };
 
-  const repository = data.repository;
-  const reviews = data.repository.reviews
+  const reviews = repository
     ? repository.reviews.edges.map((edge) => edge.node)
     : [];
 
   return (
-    <FlatList
-      data={reviews}
-      renderItem={({ item }) => <ReviewItem review={item} />}
-      keyExtractor={({ id }) => id}
-      ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
-      ItemSeparatorComponent={
-        Platform.OS !== 'android' &&
-        (({ highlighted }) => (
-          <View style={[styles.separator, highlighted && { marginLeft: 0 }]} />
-        ))
-      }
-      // ...
-    />
+    <View style={{ height: Dimensions.get('window').height }}>
+      <FlatList
+        data={reviews}
+        renderItem={({ item }) => <ReviewItem review={item} />}
+        keyExtractor={({ id }) => id}
+        ListHeaderComponent={() => (
+          <RepositoryInfo repository={{ ...repository }} />
+        )}
+        ItemSeparatorComponent={
+          Platform.OS !== 'android' &&
+          (({ highlighted }) => (
+            <View
+              style={[styles.separator, highlighted && { marginLeft: 0 }]}
+            />
+          ))
+        }
+        showsVerticalScrollIndicator={false}
+        onEndReached={onEndReach}
+        onEndReachedThreshold={0.5}
+      />
+    </View>
   );
 };
 
