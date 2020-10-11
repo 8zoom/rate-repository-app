@@ -33,7 +33,9 @@ const RepositoryList = () => {
   };
 
   return (
-    <View style={{ height: Dimensions.get('window').height }}>
+    <View
+      style={{ height: Dimensions.get('window').height, paddingBottom: 105 }}
+    >
       <RepositoryListContainer
         testID="repoList"
         orderBy={orderBy}

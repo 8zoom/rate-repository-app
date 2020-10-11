@@ -69,7 +69,7 @@ const ReviewForm = ({ onSubmit }) => {
       >
         <View
           style={{
-            backgroundColor: 'blue',
+            backgroundColor: theme.colors.primary,
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 5,
@@ -97,7 +97,7 @@ const Review = () => {
         },
       });
 
-      const id = await data.createReview.repository.id;
+      const id = await data.createReview.repositoryId;
       if (data) history.push(`/repo/${id}`);
     } catch (e) {
       console.log(e);

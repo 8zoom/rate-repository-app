@@ -37,19 +37,45 @@ export const GET_REPOSITORIES = gql`
 `;
 
 export const AUTHORIZED_USER = gql`
-  query {
+  query AuthorizedUser(
+    $includeReviews: Boolean = false
+    $first: Int = 4
+    $after: String
+  ) {
     authorizedUser {
       id
       username
+
+      reviews(first: $first, after: $after) @include(if: $includeReviews) {
+        edges {
+          node {
+            id
+            text
+            rating
+            createdAt
+            repository {
+              fullName
+            }
+            repositoryId
+            user {
+              username
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          totalCount
+          hasNextPage
+        }
+      }
     }
   }
 `;
 
-// query Repository($id: ID!, $first: Int, $after: String) {
-// reviews(first: $first, after: $after) @connection(key: "repository", filter: ["type"]) {
-
 export const REPOSITORY = gql`
-  query($id: ID!, $first: Int, $after: String) {
+  query Repository($id: ID!, $first: Int, $after: String) {
     repository(id: $id) {
       ...RepositoryBaseFields
       ratingAverage
@@ -61,6 +87,9 @@ export const REPOSITORY = gql`
             text
             rating
             createdAt
+            repository {
+              fullName
+            }
             repositoryId
             user {
               ...UserBaseFields

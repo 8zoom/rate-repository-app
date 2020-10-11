@@ -28,12 +28,14 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     paddingHorizontal: 15,
-    paddingVertical: 20,
+    paddingBottom: 20,
+    paddingTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabText: {
+    fontSize: theme.fontSizes.subheading,
     color: 'white',
   },
 });
@@ -74,9 +76,14 @@ const AppBar = () => {
           Repositories
         </Link>
         {user && (
-          <Link to="/review" component={AppBarTab}>
-            Create a review
-          </Link>
+          <>
+            <Link to="/review" component={AppBarTab}>
+              Create a review
+            </Link>
+            <Link to="/reviews" component={AppBarTab}>
+              My reviews
+            </Link>
+          </>
         )}
         {user ? (
           <Link to="/" component={AppBarTab} onPress={() => signOut()}>

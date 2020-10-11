@@ -44,7 +44,7 @@ const RepositoryInfo = ({ repository }) => {
     reviewCount,
     ownerAvatarUrl,
     url,
-  } = repository;
+  } = { ...repository };
 
   const onPress = () => Linking.openURL(url);
   return (
@@ -55,12 +55,7 @@ const RepositoryInfo = ({ repository }) => {
         </View>
 
         <View style={styles.contentContainer}>
-          <Text
-            style={styles.nameText}
-            fontWeight="bold"
-            fontSize="subheading"
-            numberOfLines={1}
-          >
+          <Text style={styles.nameText} numberOfLines={1}>
             {fullName}
           </Text>
           <Text style={styles.descriptionText} color="textSecondary">
@@ -94,13 +89,13 @@ const ReviewItem = ({ review }) => {
   return (
     <View style={{ backgroundColor: 'white', padding: 15 }}>
       <View style={{ flexDirection: 'row', marginBottom: 15 }}>
-        <View style={{ flexGrow: 0, marginRight: 20 }}>
-          <Text>{review.rating}</Text>
+        <View style={styles.ratingContainer}>
+          <Text style={styles.ratingText}>{review.rating}</Text>
         </View>
 
         <View style={{ flexGrow: 1, flexShrink: 1 }}>
-          <Text>{review.user.username}</Text>
-          <Text>{review.createdAt}</Text>
+          <Text style={styles.nameText}>{review.repository.fullName}</Text>
+          <Text style={styles.dateText}>{review.createdAt.slice(0, 10)}</Text>
           <Text>{review.text}</Text>
         </View>
       </View>
@@ -111,7 +106,6 @@ const ReviewItem = ({ review }) => {
 const SingleRepositoryItem = () => {
   // const [reviews, setReviews] = useState([]);
   const { id } = useParams();
-
   const { repository, fetchMore } = useSingleRepository({
     id,
     first: 4,
@@ -131,9 +125,7 @@ const SingleRepositoryItem = () => {
         data={reviews}
         renderItem={({ item }) => <ReviewItem review={item} />}
         keyExtractor={({ id }) => id}
-        ListHeaderComponent={() => (
-          <RepositoryInfo repository={{ ...repository }} />
-        )}
+        ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
         ItemSeparatorComponent={
           Platform.OS !== 'android' &&
           (({ highlighted }) => (

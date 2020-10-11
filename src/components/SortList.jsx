@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import {  Menu } from 'react-native-paper';
-import { IconButton, Colors , Searchbar } from 'react-native-paper';
+import { Menu } from 'react-native-paper';
+import { IconButton, Colors, Searchbar } from 'react-native-paper';
+import theme from '../theme';
 
-const SortList = ({setOrderBy, orderEnums,  searchKeyword,  setSearchKeyword }) => {
-
+const SortList = ({
+  setOrderBy,
+  orderEnums,
+  searchKeyword,
+  setSearchKeyword,
+}) => {
   const [visible, setVisible] = React.useState(false);
 
   const openMenu = () => setVisible(true);
@@ -13,17 +18,15 @@ const SortList = ({setOrderBy, orderEnums,  searchKeyword,  setSearchKeyword }) 
 
   return (
     <>
-        <Searchbar
-          style={{
-            height: 45
-          }}
-          placeholder="Search"
-          value={searchKeyword}
-          onChangeText={(v) => setSearchKeyword(v)} />
+      <Searchbar
+        style={theme.fontSizes.title}
+        placeholder="Search"
+        value={searchKeyword}
+        onChangeText={(v) => setSearchKeyword(v)}
+      />
       <View
         style={{
           paddingTop: 0,
-            height: 45,
           flexDirection: 'row',
           justifyContent: 'flex-end',
           backgroundColor: Colors.grey200,
@@ -65,4 +68,4 @@ const SortList = ({setOrderBy, orderEnums,  searchKeyword,  setSearchKeyword }) 
     </>
   );
 };
-export default SortList ;
+export default SortList;
